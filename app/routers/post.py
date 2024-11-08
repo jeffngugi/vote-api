@@ -16,7 +16,7 @@ def get_posts(db: Session = Depends(get_db),  user_id: int = Depends(oath2.get_c
     return  posts
 
 @router.post("/", status_code=status.HTTP_201_CREATED, response_model=schemas.Post)
-def create_post(post: schemas.PostCreate, db: Session = Depends(get_db), user_id: int = Depends(oath2.get_current_user)):
+def create_post(post: schemas.PostCreate, db: Session = Depends(get_db), current_user: int = Depends(oath2.get_current_user)):
     new_post = models.Post(title=post.title, content=post.content, published=post.published)
     new_post = models.Post(**post.dict())
     db.add(new_post)
@@ -26,7 +26,7 @@ def create_post(post: schemas.PostCreate, db: Session = Depends(get_db), user_id
       
     
 @router.get("/{id}", response_model=schemas.Post)
-def get_post(id: int, db: Session = Depends(get_db),  user_id: int = Depends(oath2.get_current_user)):
+def get_post(id: int, db: Session = Depends(get_db),  current_user: int = Depends(oath2.get_current_user)):
     
     post = db.query(models.Post).filter(models.Post.id == id).first()
     if not post:
@@ -37,7 +37,7 @@ def get_post(id: int, db: Session = Depends(get_db),  user_id: int = Depends(oat
 
 
 @router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_post(id:int, db: Session = Depends(get_db),  user_id: int = Depends(oath2.get_current_user)):
+def delete_post(id:int, db: Session = Depends(get_db),  current_user: int = Depends(oath2.get_current_user)):
     post = db.query(models.Post).filter(models.Post.id == id)
     print(post)
     if post.first() == None:
